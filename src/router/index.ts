@@ -7,9 +7,14 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'Hello',
+      path: '*',
       component: Home
+    },
+    {
+      path: '/:type',
+      name: 'Home',
+      component: Home,
+      props: route => ({ type: route.params.type })
     }
   ]
 })

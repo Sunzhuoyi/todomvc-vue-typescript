@@ -1,48 +1,84 @@
 <template>
   <div>
-    <section class="todoapp">
-      <!-- This section should be hidden by default and shown when there are todos -->
-			<section class="main">
-				<input id="toggle-all" class="toggle-all" type="checkbox">
-				<label for="toggle-all">Mark all as complete</label>
-				<ul class="todo-list">
-					<todo-item v-for="item in todoList" :item="item" :key="item.id" />
-				</ul>
-			</section>
-			<!-- This footer should hidden by default and shown when there are todos -->
-			<footer class="footer">
-				<!-- This should be `0 items left` by default -->
-				<span class="todo-count"><strong>0</strong> item left</span>
-				<!-- Remove this if you don't implement routing -->
-				<ul class="filters">
-					<li>
-						<a class="selected" href="#/">All</a>
-					</li>
-					<li>
-						<a href="#/active">Active</a>
-					</li>
-					<li>
-						<a href="#/completed">Completed</a>
-					</li>
-				</ul>
-				<!-- Hidden if no completed items are left ↓ -->
-				<button class="clear-completed">Clear completed</button>
-			</footer>
-		</section>
+    <!-- This section should be hidden by default and shown when there are todos -->
+    <section class="main" v-if="todoList.length">
+      <input id="toggle-all" class="toggle-all" type="checkbox">
+      <label for="toggle-all" @click="toggleCompleteAll">Mark all as complete</label>
+      <ul class="todo-list">
+        <todo-item v-for="item in todoList" :item="item" :key="item.id" />
+      </ul>
+    </section>
+    <!-- This footer should hidden by default and shown when there are todos -->
+    <footer class="footer">
+      <!-- This should be `0 items left` by default -->
+      <span class="todo-count"><strong>{{ left }}</strong> item left</span>
+      <!-- Remove this if you don't implement routing -->
+      <ul class="filters">
+        <li v-for="(value, key) in types" :key="key">
+          <router-link :class="{ selected: key === type }" :to="'/' + key">{{ value }}</router-link>
+        </li>
+      </ul>
+      <!-- Hidden if no completed items are left ↓ -->
+      <button class="clear-completed" type="button" @click="clearCompleted">Clear completed</button>
+    </footer>
   </div>
 </template>
 
 <script lang="ts">
   import { mapState } from 'vuex'
-  import TodoItem from '@/components/TodoItem.vue'
+  import { State, TodoItem, MUTATIONS } from '@/store'
+  import TodoItemComponent from '@/components/TodoItem.vue'
 
   export default {
+    props: ['type'],
+
+    data () {
+      return {
+        types: {
+          all: 'All',
+          active: 'Action',
+          completed: 'Completed'
+        },
+
+        isAllCompleted: false
+      }
+    },
+
     computed: {
-      ...mapState(['todoList'])
+      todoList () {
+        const todoList: TodoItem[] = this.$store.state.todoList
+        switch (this.type) {
+          case 'active':
+            return todoList.filter((item: TodoItem) => !item.isCompleted)
+          case 'completed':
+            return todoList.filter((item: TodoItem) => item.isCompleted)
+          default:
+            return todoList
+        }
+      },
+
+      left () {
+        return this.$store.state.todoList.filter(item => !item.isCompleted).length
+      }
+    },
+
+    methods: {
+      clearCompleted () {
+        this.$store.commit(MUTATIONS.CLEAR_COMPLETED)
+      },
+
+      toggleCompleteAll () {
+        if (!this.isAllCompleted) {
+          this.$store.commit(MUTATIONS.COMPLETE_ALL)
+        } else {
+          this.$store.commit(MUTATIONS.UNCOMPLETE_ALL)
+        }
+        this.isAllCompleted = !this.isAllCompleted
+      }
     },
 
     components: {
-      TodoItem
+      TodoItem: TodoItemComponent
     }
   }
 </script>

@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-  import { ACTIONS } from '@/store'
+  import { MUTATIONS } from '@/store'
 
   export default {
     data () {
@@ -22,8 +22,18 @@
 
     methods: {
       handleKeyDown (event) {
-        if (event.code === 'Enter') {
-          this.$store.dispatch(ACTIONS.ADD_TODOITEM, { content: this.value })
+        if (event.code === 'Enter' && this.value !== '') {
+          const store = this.$store
+
+          store.commit(MUTATIONS.ADD_TODOITEM, {
+            id: store.state.todoList.length,
+            content: this.value,
+            isCompleted: false
+          })
+
+          window.setTimeout(() => {
+            this.value = ''
+          }, 100)
         }
       }
     }
