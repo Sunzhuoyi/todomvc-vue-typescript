@@ -10,9 +10,10 @@
 </template>
 
 <script lang="ts">
+  import Vue from 'vue'
   import { MUTATIONS } from '@/store'
 
-  export default {
+  export default Vue.extend({
     props: {
       item: Object
     },
@@ -26,5 +27,5 @@
         this.$store.commit(MUTATIONS.TOGGLE_COMPLETE, this.item.id)
       }
     }
-  }
+  })
 </script>

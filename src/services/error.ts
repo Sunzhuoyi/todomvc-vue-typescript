@@ -1,8 +1,11 @@
-export default (err) => {
+interface ErrorObject {
+  message: string
+}
+export default (err: ErrorObject | string) => {
   let msg: string
 
-  if (err.message) msg = err.message
-  else msg = err
+  if (typeof err === 'string') msg = err
+  else msg = err.message
 
   window.alert(msg)
 }

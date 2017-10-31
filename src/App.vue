@@ -16,10 +16,11 @@
 </template>
 
 <script lang="ts">
+  import Vue from 'vue'
   import TodoInput from './components/TodoInput.vue'
   import { ACTIONS } from '@/store'
 
-  export default {
+  export default Vue.extend({
     name: 'app',
 
     created () {
@@ -29,5 +30,5 @@
     components: {
       TodoInput
     }
-  }
+  })
 </script>

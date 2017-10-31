@@ -25,12 +25,24 @@
 </template>
 
 <script lang="ts">
+  import Vue from 'vue'
   import { mapState } from 'vuex'
-  import { State, TodoItem, MUTATIONS } from '@/store'
+  import { State, TodoItem, MUTATIONS } from '../store'
   import TodoItemComponent from '@/components/TodoItem.vue'
 
-  export default {
-    props: ['type'],
+  interface Data {
+    types: {
+      all: string,
+      active: string,
+      completed: string
+    },
+    isAllCompleted: boolean
+  }
+
+  export default Vue.extend({
+    props: {
+      type: String
+    },
 
     data () {
       return {
@@ -45,25 +57,24 @@
     },
 
     computed: {
-      todoList () {
-        const todoList: TodoItem[] = this.$store.state.todoList
-        switch (this.type) {
-          case 'active':
-            return todoList.filter((item: TodoItem) => !item.isCompleted)
-          case 'completed':
-            return todoList.filter((item: TodoItem) => item.isCompleted)
-          default:
-            return todoList
+      ...mapState({
+        todoList (state: State): TodoItem[] {
+          const { todoList } = state
+          switch (this.type) {
+            case 'active':
+              return todoList.filter((item: TodoItem) => !item.isCompleted)
+            case 'completed':
+              return todoList.filter((item: TodoItem) => item.isCompleted)
+            default:
+              return todoList
+          }
         }
-      },
-
-      left () {
-        return this.$store.state.todoList.filter(item => !item.isCompleted).length
-      }
+      })
     },
 
     methods: {
       clearCompleted () {
+        console.log(this.type)
         this.$store.commit(MUTATIONS.CLEAR_COMPLETED)
       },
 
@@ -80,5 +91,5 @@
     components: {
       TodoItem: TodoItemComponent
     }
-  }
+  })
 </script>

@@ -1,6 +1,6 @@
 export default {
-  get (key: string): any {
-    const data = window.localStorage.getItem(key)
+  get (key: string) {
+    const data = window.localStorage.getItem(key) || ''
     try {
       return JSON.parse(data)
     } catch (err) {

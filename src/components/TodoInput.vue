@@ -11,9 +11,10 @@
 </template>
 
 <script lang="ts">
+  import Vue from 'vue'
   import { MUTATIONS } from '@/store'
 
-  export default {
+  export default Vue.extend({
     data () {
       return {
         value: ''
@@ -21,7 +22,7 @@
     },
 
     methods: {
-      handleKeyDown (event) {
+      handleKeyDown (event: { code: string }) {
         if (event.code === 'Enter' && this.value !== '') {
           const store = this.$store
 
@@ -37,5 +38,5 @@
         }
       }
     }
-  }
+  })
 </script>
