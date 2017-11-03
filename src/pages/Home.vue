@@ -26,7 +26,6 @@
 
 <script lang="ts">
   import Vue from 'vue'
-  import { mapState } from 'vuex'
   import { State, TodoItem, MUTATIONS } from '../store'
   import TodoItemComponent from '@/components/TodoItem.vue'
 
@@ -57,24 +56,28 @@
     },
 
     computed: {
-      ...mapState({
-        todoList (state: State): TodoItem[] {
-          const { todoList } = state
-          switch (this.type) {
-            case 'active':
-              return todoList.filter((item: TodoItem) => !item.isCompleted)
-            case 'completed':
-              return todoList.filter((item: TodoItem) => item.isCompleted)
-            default:
-              return todoList
-          }
+      todoList (): TodoItem[] {
+        const todoList: TodoItem[] = this.$store.state.todoList
+
+        switch (this.type) {
+          case 'active':
+            return todoList.filter((item: TodoItem) => !item.isCompleted)
+          case 'completed':
+            return todoList.filter((item: TodoItem) => item.isCompleted)
+          default:
+            return todoList
         }
-      })
+      },
+
+      left (): number {
+        const todoList: TodoItem[] = this.$store.state.todoList
+
+        return todoList.filter(item => !item.isCompleted).length
+      }
     },
 
     methods: {
       clearCompleted () {
-        console.log(this.type)
         this.$store.commit(MUTATIONS.CLEAR_COMPLETED)
       },
 
